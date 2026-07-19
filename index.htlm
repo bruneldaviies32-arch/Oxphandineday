@@ -1,1 +1,501 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>L'Aventure de Houéfa</title>
+  <style>
+    /* --- CONFIGURATION GLOBALE --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      font-family: 'Times New Roman', Times, serif;
+      overflow: hidden;
+      background-color: #000;
+      color: #fff;
+    }
+
+    /* --- ÉCRAN PRINCIPAL (FOND ID.png) --- */
+    #main-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: url('actifs/Image/ID.png') no-repeat center center;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    /* --- SECTION 1 : INTERFACE PENDU (ADAPTATIVE) --- */
+    #hangman-interface {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      z-index: 10;
+      width: 95%;
+    }
+    .dash-container {
+      display: flex;
+      justify-content: center;
+      gap: 1.5vw;
+      width: 100%;
+      flex-wrap: nowrap; /* Force à rester sur une seule ligne */
+    }
+    .letter-slot {
+      font-size: 5vw; /* Taille adaptative par rapport à l'écran */
+      max-size: 2.8rem;
+      font-weight: bold;
+      color: #fff;
+      border-bottom: 3px solid #fff;
+      width: 4.5vw;
+      max-width: 40px;
+      text-align: center;
+      height: 7vw;
+      max-height: 55px;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+    .active-slot {
+      animation: blink 0.8s infinite;
+    }
+    #btn-delete {
+      font-size: 2rem;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.1s;
+    }
+    #btn-delete:active {
+      transform: scale(0.85);
+    }
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      max-width: 320px;
+      width: 100%;
+    }
+    .key {
+      background: transparent;
+      color: #fff;
+      border: 2px solid #fff;
+      padding: 12px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-family: 'Times New Roman', Times, serif;
+    }
+    .key:active {
+      background: #fff;
+      color: #000;
+    }
+
+    /* --- SECTION 2 : DIALOGUE & JAUGE STYLISÉE AVEC POURCENTAGE --- */
+    #verification-interface {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+      width: 85%;
+      max-width: 500px;
+      text-align: center;
+      z-index: 10;
+    }
+    #typing-text {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #fff;
+      min-height: 70px;
+      line-height: 1.4;
+    }
+    /* Structure de la jauge */
+    .gauge-wrapper {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 15px;
+    }
+    .progress-bar-container {
+      flex-grow: 1;
+      height: 14px;
+      border: 2px solid #fff;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      padding: 2px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+    #progress-fill {
+      width: 0%;
+      height: 100%;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 8px #fff;
+      transition: width 0.1s ease-out;
+    }
+    #progress-text {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #fff;
+      min-width: 45px;
+      text-align: right;
+    }
+    #error-alert {
+      display: none;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.4rem;
+      margin-top: 5px;
+      letter-spacing: 2px;
+    }
+
+    /* --- SECTION 3 : LE CADRAN IPHONE --- */
+    #iphone-interface {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      background: transparent;
+      padding: 20px;
+      z-index: 20;
+    }
+    #iphone-msg {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 5px;
+    }
+    .dots-container {
+      display: flex;
+      gap: 20px;
+    }
+    .dot {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      background: transparent;
+      transition: background 0.2s;
+    }
+    .dot.filled {
+      background: #fff;
+      box-shadow: 0 0 8px #fff;
+    }
+    .numpad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .num-btn {
+      width: 70px;
+      height: 70px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      background: transparent;
+      color: #fff;
+      font-size: 1.8rem;
+      font-family: 'Times New Roman', Times, serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+    }
+    .num-btn:active {
+      background: #fff;
+      color: #000;
+    }
+
+    /* --- SECTION 4 : SUCCÈS & RÉSULTAT --- */
+    #bravo-text {
+      display: none;
+      font-size: 5rem;
+      font-weight: bold;
+      color: #fff;
+      z-index: 10;
+      letter-spacing: 4px;
+    }
+    @keyframes slow-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+    .slow-blink-animation {
+      animation: slow-blink 2s infinite;
+    }
+    #btn-adventure {
+      display: none;
+      margin-top: 25px;
+      padding: 15px 35px;
+      font-size: 1.4rem;
+      font-weight: bold;
+      font-family: 'Times New Roman', Times, serif;
+      background: transparent;
+      color: #fff;
+      border: 2px solid #fff;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.3s ease;
+    }
+    #btn-adventure:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    /* --- ÉCRAN FINAL (image1.png) --- */
+    #final-screen {
+      display: none;
+      width: 100%;
+      height: 100%;
+      background: url('actifs/Image/image1.png') no-repeat center center;
+      background-size: cover;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div id="main-container">
+
+    <!-- ÉTAPE 1 : INTERFACE PENDU -->
+    <div id="hangman-interface">
+      <div class="dash-container" id="dash-container"></div>
+      <div id="btn-delete">❌</div>
+      <div class="keyboard" id="virtual-keyboard"></div>
+    </div>
+
+    <!-- ÉTAPE 2 : TEXTE DYNAMIQUE & JAUGE STYLISÉE AVEC POURCENTAGE -->
+    <div id="verification-interface">
+      <div id="typing-text"></div>
+      <div class="gauge-wrapper">
+        <div class="progress-bar-container">
+          <div id="progress-fill"></div>
+        </div>
+        <div id="progress-text">0%</div>
+      </div>
+      <div id="error-alert">OUPS.. ÉCHEC</div>
+    </div>
+
+    <!-- ÉTAPE 3 : CADRAN IPHONE -->
+    <div id="iphone-interface">
+      <div id="iphone-msg">Réessayer avec le mot de passe de votre iPhone</div>
+      <div class="dots-container">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="numpad">
+        <div class="num-btn" onclick="pressNum('1')">1</div>
+        <div class="num-btn" onclick="pressNum('2')">2</div>
+        <div class="num-btn" onclick="pressNum('3')">3</div>
+        <div class="num-btn" onclick="pressNum('4')">4</div>
+        <div class="num-btn" onclick="pressNum('5')">5</div>
+        <div class="num-btn" onclick="pressNum('6')">6</div>
+        <div class="num-btn" onclick="pressNum('7')">7</div>
+        <div class="num-btn" onclick="pressNum('8')">8</div>
+        <div class="num-btn" onclick="pressNum('9')">9</div>
+        <div></div>
+        <div class="num-btn" onclick="pressNum('0')">0</div>
+        <div></div>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 4 : SUCCÈS -->
+    <div id="bravo-text" class="slow-blink-animation">BRAVO!</div>
+    <button id="btn-adventure">Commencer l'aventure</button>
+
+  </div>
+
+  <div id="final-screen"></div>
+
+  <!-- AUDIO -->
+  <audio id="adventure-music" src="(1).mp3" loop></audio>
+
+  <script>
+    const TARGET_WORD = "OXPHANDINE";
+    const TARGET_CODE = "323266";
+    let currentInput = "";
+    let currentCodeInput = "";
+
+    const hangmanInterface = document.getElementById('hangman-interface');
+    const dashContainer = document.getElementById('dash-container');
+    const btnDelete = document.getElementById('btn-delete');
+    const keyboardContainer = document.getElementById('virtual-keyboard');
+    
+    const verificationInterface = document.getElementById('verification-interface');
+    const typingTextEl = document.getElementById('typing-text');
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    const errorAlert = document.getElementById('error-alert');
+
+    const iphoneInterface = document.getElementById('iphone-interface');
+    const dots = document.querySelectorAll('.dot');
+
+    const bravoText = document.getElementById('bravo-text');
+    const btnAdventure = document.getElementById('btn-adventure');
+    const mainContainer = document.getElementById('main-container');
+    const finalScreen = document.getElementById('final-screen');
+    const bgMusic = document.getElementById('adventure-music');
+
+    // --- INITIALISATION DES 10 TIRETS ---
+    for (let i = 0; i < TARGET_WORD.length; i++) {
+      const slot = document.createElement('div');
+      slot.classList.add('letter-slot');
+      if (i === 0) slot.classList.add('active-slot');
+      dashContainer.appendChild(slot);
+    }
+
+    const requiredLetters = Array.from(new Set(TARGET_WORD));
+    const alphabet = "BCFGJKLMQRSTUVWYZ";
+    let pool = [...requiredLetters];
+    
+    while(pool.length < 15) {
+      let randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+      if(!pool.includes(randomLetter)) pool.push(randomLetter);
+    }
+    pool.sort(() => Math.random() - 0.5);
+
+    pool.forEach(letter => {
+      const key = document.createElement('div');
+      key.classList.add('key');
+      key.textContent = letter;
+      key.addEventListener('click', () => handleKeyPress(letter));
+      keyboardContainer.appendChild(key);
+    });
+
+    function updateSlots() {
+      const slots = document.querySelectorAll('.letter-slot');
+      slots.forEach((slot, index) => {
+        slot.textContent = currentInput[index] || "";
+        slot.classList.remove('active-slot');
+        if (index === currentInput.length) {
+          slot.classList.add('active-slot');
+        }
+      });
+    }
+
+    function handleKeyPress(letter) {
+      if (currentInput.length < TARGET_WORD.length) {
+        currentInput += letter;
+        updateSlots();
+        checkWordSuccess();
+      }
+    }
+
+    btnDelete.addEventListener('click', () => {
+      if (currentInput.length > 0) {
+        currentInput = currentInput.slice(0, -1);
+        updateSlots();
+      }
+    });
+
+    function checkWordSuccess() {
+      if (currentInput === TARGET_WORD) {
+        hangmanInterface.classList.add('hidden');
+        startVerificationStage();
+      }
+    }
+
+    // --- ÉTAPE 2 : EFFET DE SAISIE ET POURCENTAGE DYNAMIQUE ---
+    function startVerificationStage() {
+      verificationInterface.style.display = 'flex';
+      const sentence = "Laissez-moi le temps de confirmer que vous êtes vraiment Houéfa";
+      let charIndex = 0;
+
+      function type() {
+        if (charIndex < sentence.length) {
+          typingTextEl.textContent += sentence.charAt(charIndex);
+          charIndex++;
+          setTimeout(type, 70);
+        } else {
+          startGaugeProgress();
+        }
+      }
+      type();
+    }
+
+    function startGaugeProgress() {
+      let progress = 0;
+      
+      function advance() {
+        if (progress < 97) {
+          progress += Math.floor(Math.random() * 3) + 1;
+          if(progress > 97) progress = 97;
+          
+          progressFill.style.width = progress + '%';
+          progressText.textContent = progress + '%'; // Mise à jour textuelle du pourcentage
+          
+          let randomDelay = Math.floor(Math.random() * 120) + 40;
+          setTimeout(advance, randomDelay);
+        } else {
+          errorAlert.style.display = 'block';
+          setTimeout(() => {
+            showIphoneInterface();
+          }, 800);
+        }
+      }
+      advance();
+    }
+
+    // --- ÉTAPE 3 : CODE IPHONE ---
+    function showIphoneInterface() {
+      iphoneInterface.style.display = 'flex';
+    }
+
+    window.pressNum = function(num) {
+      if (currentCodeInput.length < 6) {
+        currentCodeInput += num;
+        dots[currentCodeInput.length - 1].classList.add('filled');
+        
+        if (currentCodeInput.length === 6) {
+          if (currentCodeInput === TARGET_CODE) {
+            triggerCodeSuccess();
+          } else {
+            setTimeout(() => {
+              currentCodeInput = "";
+              dots.forEach(d => d.classList.remove('filled'));
+            }, 300);
+          }
+        }
+      }
+    };
+
+    // --- ÉTAPE 4 : FIN ET AVENTURE ---
+    function triggerCodeSuccess() {
+      verificationInterface.classList.add('hidden');
+      iphoneInterface.classList.add('hidden');
+      
+      bravoText.style.display = 'block';
+
+      setTimeout(() => {
+        btnAdventure.style.display = 'block';
+      }, 5000);
+    }
+
+    btnAdventure.addEventListener('click', () => {
+      mainContainer.style.display = 'none';
+      finalScreen.style.display = 'block';
+
+      bgMusic.play().catch(error => {
+        document.addEventListener('click', () => { bgMusic.play(); }, { once: true });
+      });
+    });
+  </script>
+</body>
+</html>
 
