@@ -4,36 +4,73 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>L'Aventure de Houéfa</title>
-  <style>
-    /* --- CONFIGURATION GLOBALE --- */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-    }
-    body, html {
-      width: 100%;
-      height: 100%;
-      font-family: 'Times New Roman', Times, serif;
-      overflow: hidden;
-      background-color: #000;
-      color: #fff;
-    }
+  <!-- Lien vers le fichier CSS séparé -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    /* --- ÉCRAN PRINCIPAL (FOND ID.png) --- */
-    #main-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      background: url('actifs/Image/ID.png') no-repeat center center;
-      background-size: cover;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
+  <div id="main-container">
+    <!-- ÉTAPE 1 : INTERFACE PENDU -->
+    <div id="hangman-interface">
+      <div class="dash-container" id="dash-container"></div>
+      <div id="btn-delete">X</div>
+      <div class="keyboard" id="virtual-keyboard"></div>
+    </div>
 
+    <!-- ÉTAPE 2 : VERIFICATION -->
+    <div id="verification-interface">
+      <div id="typing-text"></div>
+      <div class="gauge-wrapper">
+        <div class="progress-bar-container">
+          <div id="progress-fill"></div>
+        </div>
+        <div id="progress-text">0%</div>
+      </div>
+      <div id="error-alert">OUPS.. ÉCHEC</div>
+    </div>
+
+    <!-- ÉTAPE 3 : IPHONE -->
+    <div id="iphone-interface">
+      <div id="iphone-msg">Réessayer avec le mot de passe de votre iPhone</div>
+      <div class="dots-container">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="numpad">
+        <div class="num-btn" onclick="pressNum('1')">1</div>
+        <div class="num-btn" onclick="pressNum('2')">2</div>
+        <div class="num-btn" onclick="pressNum('3')">3</div>
+        <div class="num-btn" onclick="pressNum('4')">4</div>
+        <div class="num-btn" onclick="pressNum('5')">5</div>
+        <div class="num-btn" onclick="pressNum('6')">6</div>
+        <div class="num-btn" onclick="pressNum('7')">7</div>
+        <div class="num-btn" onclick="pressNum('8')">8</div>
+        <div class="num-btn" onclick="pressNum('9')">9</div>
+        <div></div>
+        <div class="num-btn" onclick="pressNum('0')">0</div>
+        <div></div>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 4 : SUCCÈS -->
+    <div id="bravo-text" class="slow-blink-animation">BRAVO!</div>
+    <button id="btn-adventure">Commencer l'aventure</button>
+  </div>
+
+  <!-- ÉCRAN FINAL DE L'AVENTURE -->
+  <div id="final-screen">
+    <div id="story-overlay">
+      <div id="story-text"></div>
+    </div>
+  </div>
+
+  <!-- AUDIO -->
+  <audio id="adventure-music" src="(1).mp3" loop></audio>
+
+  <!-- Lien vers le fichier JavaScript séparé -->
+  <script src="script.js"></script>
+</body>
+</html>
     /* --- SECTION 1 : INTERFACE PENDU (ADAPTATIVE) --- */
     #hangman-interface {
       display: flex;
