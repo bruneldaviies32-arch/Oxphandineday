@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Joyeux anniversaire Oxphandine</title>
+
+    <!-- Police artistique -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- =========================
+     PHASE 1 : AUTHENTIFICATION
+========================= -->
+
+
+<!-- ÉCRAN 1 : ID + PENDU -->
+<section id="screen-id" class="screen active">
+
+    <img src="assets/images/ID.png" class="background-id">
+
+    <div class="hangman-container">
+
+        <div id="word-lines" class="word-lines">
+            <!-- Les 10 traits seront générés par JavaScript -->
+        </div>
+
+
+        <div id="letters-container" class="letters-container">
+            <!-- Les lettres aléatoires seront générées par JavaScript -->
+        </div>
+
+
+        <button id="delete-letter" class="delete-btn">
+            ✕
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- ÉCRAN 2 : FAUSSE VALIDATION -->
+
+<section id="screen-confirm" class="screen">
+
+    <div class="confirmation-box">
+
+        <p id="confirmation-text"></p>
+
+
+        <div class="progress-container">
+
+            <div id="progress-bar"></div>
+
+        </div>
+
+
+        <p id="failure-message">
+            OUPS... ÉCHEC
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+<!-- ÉCRAN 3 : CODE IPHONE -->
+
+<section id="screen-code" class="screen">
+
+
+    <div class="neon-frame">
+
+
+        <p class="code-message">
+            Réessayez avec le mot de passe de votre iPhone
+        </p>
+
+
+        <div id="pin-display">
+
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </div>
+
+
+
+        <div id="number-pad" class="number-pad">
+
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+
+            <button>4</button>
+            <button>5</button>
+            <button>6</button>
+
+            <button>7</button>
+            <button>8</button>
+            <button>9</button>
+
+            <button></button>
+            <button>0</button>
+            <button id="delete-pin">⌫</button>
+
+
+        </div>
+
+
+        <h1 id="bravo">
+            BRAVO !
+        </h1>
+
+
+        <p id="start-adventure">
+            Commencer l'aventure
+        </p>
+
+
+    </div>
+
+
+</section>
+
+
+
+
+
+<!-- =========================
+     PHASE 2 : AVENTURE
+========================= -->
+
+
+<section id="adventure" class="screen">
+
+
+    <!-- Diaporama -->
+
+    <div id="slideshow">
+
+        <img id="slide-image" src="assets/images/image1.png">
+
+    </div>
+
+
+
+    <!-- Texte émotionnel -->
+
+    <div id="story-text"></div>
+
+
+
+
+    <!-- Vidéo anniversaire -->
+
+    <video id="birthday-video"
+           src="assets/video/video1.mp4"
+           playsinline>
+    </video>
+
+
+
+
+    <!-- Feu d'artifice -->
+
+    <video id="fireworks"
+           src="assets/video/feu.mp4"
+           playsinline>
+    </video>
+
+
+
+</section>
+
+
+
+
+
+<!-- =========================
+     ÉPILOGUE
+========================= -->
+
+
+<section id="epilogue" class="screen">
+
+
+    <img src="assets/images/ID.png" class="final-image">
+
+
+</section>
+
+
+
+
+
+<!-- =========================
+     AUDIO
+========================= -->
+
+
+<audio id="music1"
+       src="assets/audio/musique (1).mp3">
+</audio>
+
+
+<audio id="music2"
+       src="assets/audio/musique (2).mp3">
+</audio>
+
+
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
